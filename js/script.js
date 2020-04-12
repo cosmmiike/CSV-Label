@@ -4,29 +4,6 @@ window.addEventListener("load", () => {
 });
 
 
-let collectionHas = (a, b) => {
-    for(var i = 0, len = a.length; i < len; i ++) {
-        if(a[i] == b) return true;
-    }
-    return false;
-}
-
-
-let findParentBySelector = (elm, selector) => {
-    var all = document.querySelectorAll(selector);
-    var cur = elm.parentNode;
-    while(cur && !collectionHas(all, cur)) {
-        cur = cur.parentNode;
-    }
-    return cur;
-}
-
-
-let labelClick = (e, elem) => {
-  elem.textContent = Number(elem.textContent) + 1;
-}
-
-
 let createBox = e => {
   let image = document.querySelector("#image");
   if (e.target == document.querySelector("#imrect")) {
@@ -93,7 +70,7 @@ let createBox = e => {
     label_text.setAttribute("alignment-baseline", "middle");
     label_text.setAttribute("text-anchor", "middle");
     label_text.setAttribute("style", "pointer-events: none;");
-    label_text.textContent = 'x';
+    label_text.textContent = "1";
 
     box.appendChild(rect);
     box.appendChild(lt);
@@ -106,6 +83,7 @@ let createBox = e => {
     box.appendChild(num_label);
     image.appendChild(box);
 
+    label_circle.addEventListener("click", () => removeBox(label_text));
     dragBox(box);
     dragNode(lt);
     dragNode(rt);
@@ -191,7 +169,7 @@ let dragNode = node => {
     pos3 = e.clientX;
     pos4 = e.clientY;
 
-    let box = findParentBySelector(node, ".box");
+    let box = node.parentNode;
     let rect = box.querySelector(".rect");
     let lt = box.querySelector(".lt");
     let rt = box.querySelector(".rt");
@@ -243,4 +221,10 @@ let dragNode = node => {
   }
 
   node.onmousedown = dragMouseDown;
+}
+
+
+let removeBox = label => {
+  let box = label.parentNode.parentNode;
+  box.parentNode.removeChild(box);
 }
