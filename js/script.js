@@ -11,7 +11,7 @@ let createBox = e => {
 
     let x = e.clientX - image_coords.left;
     let y = e.clientY - image_coords.top;
-    let w = 50;
+    let size = 40;
     let label_rad = 10;
 
     let box = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -21,8 +21,8 @@ let createBox = e => {
     rect.setAttribute("class", "rect");
     rect.setAttribute("x", x);
     rect.setAttribute("y", y);
-    rect.setAttribute("width", w);
-    rect.setAttribute("height", w);
+    rect.setAttribute("width", size);
+    rect.setAttribute("height", size);
     rect.setAttribute("style", "fill: blue; stroke: pink; stroke-width: 3; fill-opacity: 0.1; stroke-opacity: 0.9");
 
     let corner = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -36,23 +36,23 @@ let createBox = e => {
 
     let rt = corner.cloneNode(true);
     rt.setAttribute("class", "rt");
-    rt.setAttribute("cx", x + w);
+    rt.setAttribute("cx", x + size);
     rt.setAttribute("cy", y);
 
     let lb = corner.cloneNode(true);
     lb.setAttribute("class", "lb");
     lb.setAttribute("cx", x);
-    lb.setAttribute("cy", y + w);
+    lb.setAttribute("cy", y + size);
 
     let rb = corner.cloneNode(true);
     rb.setAttribute("class", "rb");
-    rb.setAttribute("cx", x + w);
-    rb.setAttribute("cy", y + w);
+    rb.setAttribute("cx", x + size);
+    rb.setAttribute("cy", y + size);
 
     let num_label = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     num_label.setAttribute("class", "num_label");
-    num_label.setAttribute("x", x + w / 2 - label_rad);
-    num_label.setAttribute("y", y + w / 2 - label_rad);
+    num_label.setAttribute("x", x + size / 2 - label_rad);
+    num_label.setAttribute("y", y + size / 2 - label_rad);
     num_label.setAttribute("width", label_rad * 2);
     num_label.setAttribute("height", label_rad * 2);
 
@@ -118,20 +118,35 @@ let dragBox = box => {
     pos3 = e.clientX;
     pos4 = e.clientY;
 
-    rect = box.querySelector(".rect");
-    rect.setAttribute("x", rect.getAttribute("x") - pos1);
-    rect.setAttribute("y", rect.getAttribute("y") - pos2);
-
-    label = box.querySelector(".num_label");
-    label.setAttribute("x", label.getAttribute("x") - pos1);
-    label.setAttribute("y", label.getAttribute("y") - pos2);
-
+    let image = document.querySelector("#image");
+    let image_coords = image.getBoundingClientRect();
+    let rect = box.querySelector(".rect");
+    let lt = box.querySelector(".lt");
+    let rt = box.querySelector(".rt");
+    let lb = box.querySelector(".lb");
+    let rb = box.querySelector(".rb");
+    let label = box.querySelector(".num_label");
     let nodes = ["lt", "rt", "lb", "rb"];
-    for (let node of nodes) {
-      let elem = box.querySelector("." + node);
-      elem.setAttribute("cx", elem.getAttribute("cx") - pos1);
-      elem.setAttribute("cy", elem.getAttribute("cy") - pos2);
-    }
+
+    if (Number(lt.getAttribute("cx")) > 0 && pos1 > 0 ||
+        Number(rt.getAttribute("cx")) < Number(image.getAttribute("width")) && pos1 < 0) {
+          rect.setAttribute("x", Number(rect.getAttribute("x")) - pos1);
+          label.setAttribute("x", Number(label.getAttribute("x")) - pos1);
+          for (let node of nodes) {
+            let elem = box.querySelector("." + node);
+            elem.setAttribute("cx", Number(elem.getAttribute("cx")) - pos1);
+          }
+        }
+
+    if (Number(lt.getAttribute("cy")) > pos2 && pos2 > 0 ||
+        Number(lb.getAttribute("cy")) + pos2 <= Number(image.getAttribute("height")) && pos2 < 0) {
+        rect.setAttribute("y", Number(rect.getAttribute("y")) - pos2);
+        label.setAttribute("y", Number(label.getAttribute("y")) - pos2);
+        for (let node of nodes) {
+          let elem = box.querySelector("." + node);
+          elem.setAttribute("cy", Number(elem.getAttribute("cy")) - pos2);
+        }
+      }
   }
 
   let closeDragElement = () => {
@@ -170,49 +185,52 @@ let dragNode = node => {
     pos4 = e.clientY;
 
     let box = node.parentNode;
+    let image = box.parentNode;
     let rect = box.querySelector(".rect");
     let lt = box.querySelector(".lt");
     let rt = box.querySelector(".rt");
     let lb = box.querySelector(".lb");
     let rb = box.querySelector(".rb");
     let label = box.querySelector(".num_label");
-
     let nodeClass = node.getAttribute("class");
-    if (nodeClass == 'rb') {
-      rb.setAttribute("cx", rb.getAttribute("cx") - pos1);
-      rb.setAttribute("cy", rb.getAttribute("cy") - pos2);
-      rt.setAttribute("cx", rt.getAttribute("cx") - pos1);
-      lb.setAttribute("cy", lb.getAttribute("cy") - pos2);
-      rect.setAttribute("width", rect.getAttribute("width") - pos1);
-      rect.setAttribute("height", rect.getAttribute("height") - pos2);
-    } else if (nodeClass == 'rt') {
-      rt.setAttribute("cx", rt.getAttribute("cx") - pos1);
-      rt.setAttribute("cy", rt.getAttribute("cy") - pos2);
-      rb.setAttribute("cx", rb.getAttribute("cx") - pos1);
-      lt.setAttribute("cy", lt.getAttribute("cy") - pos2);
-      rect.setAttribute("y", rect.getAttribute("y") - pos2);
-      rect.setAttribute("width", rect.getAttribute("width") - pos1);
-      rect.setAttribute("height", lb.getAttribute("cy") - lt.getAttribute("cy"));
-    } else if (nodeClass == 'lb') {
-      lb.setAttribute("cx", lb.getAttribute("cx") - pos1);
-      lb.setAttribute("cy", lb.getAttribute("cy") - pos2);
-      lt.setAttribute("cx", lt.getAttribute("cx") - pos1);
-      rb.setAttribute("cy", rb.getAttribute("cy") - pos2);
-      rect.setAttribute("x", rect.getAttribute("x") - pos1);
-      rect.setAttribute("width", rt.getAttribute("cx") - lt.getAttribute("cx"));
-      rect.setAttribute("height", rect.getAttribute("height") - pos2);
-    } else if (nodeClass == 'lt') {
-      lt.setAttribute("cx", lt.getAttribute("cx") - pos1);
-      lt.setAttribute("cy", lt.getAttribute("cy") - pos2);
-      lb.setAttribute("cx", lb.getAttribute("cx") - pos1);
-      rt.setAttribute("cy", rt.getAttribute("cy") - pos2);
-      rect.setAttribute("x", rect.getAttribute("x") - pos1);
-      rect.setAttribute("y", rect.getAttribute("y") - pos2);
-      rect.setAttribute("width", rt.getAttribute("cx") - lt.getAttribute("cx"));
-      rect.setAttribute("height", lb.getAttribute("cy") - lt.getAttribute("cy"));
+
+    if ((nodeClass == 'rt' || nodeClass == 'rb') &&
+        (Number(rt.getAttribute("cx")) + pos1 < Number(image.getAttribute("width")) && pos1 < 0 ||
+         Number(rect.getAttribute("width")) - pos1 > 40 && pos1 > 0 )) {
+      rb.setAttribute("cx", Number(rb.getAttribute("cx")) - pos1);
+      rt.setAttribute("cx", Number(rt.getAttribute("cx")) - pos1);
+      rect.setAttribute("width", Number(rect.getAttribute("width")) - pos1);
+      label.setAttribute("x", Number(label.getAttribute("x")) - pos1 / 2);
     }
-    label.setAttribute("x", label.getAttribute("x") - pos1 / 2);
-    label.setAttribute("y", label.getAttribute("y") - pos2 / 2);
+
+    if ((nodeClass == 'lb' || nodeClass == 'rb') &&
+        (Number(lb.getAttribute("cy")) + pos2 < Number(image.getAttribute("height")) && pos2 < 0 ||
+         Number(rect.getAttribute("height")) - pos2 > 40 && pos2 > 0 )) {
+      lb.setAttribute("cy", Number(lb.getAttribute("cy")) - pos2);
+      rb.setAttribute("cy", Number(rb.getAttribute("cy")) - pos2);
+      rect.setAttribute("height", Number(rect.getAttribute("height")) - pos2);
+      label.setAttribute("y", Number(label.getAttribute("y")) - pos2 / 2);
+    }
+
+    if ((nodeClass == 'lt' || nodeClass == 'rt') &&
+        (Number(lt.getAttribute("cy")) - pos2 < Number(image.getAttribute("height")) && pos2 > 0 ||
+         Number(rect.getAttribute("height")) + pos2 > 40 && pos2 < 0)) {
+      lt.setAttribute("cy", Number(lt.getAttribute("cy")) - pos2);
+      rt.setAttribute("cy", Number(rt.getAttribute("cy")) - pos2);
+      rect.setAttribute("y", Number(rect.getAttribute("y")) - pos2);
+      rect.setAttribute("height", Number(rect.getAttribute("height")) + pos2);
+      label.setAttribute("y", Number(label.getAttribute("y")) - pos2 / 2);
+    }
+
+    if ((nodeClass == 'lt' || nodeClass == 'lb') &&
+        (Number(lt.getAttribute("cx")) - pos1 < Number(image.getAttribute("width")) && pos1 > 0 ||
+         Number(rect.getAttribute("width")) + pos1 > 40 && pos1 < 0)) {
+      lt.setAttribute("cx", Number(lt.getAttribute("cx")) - pos1);
+      lb.setAttribute("cx", Number(lb.getAttribute("cx")) - pos1);
+      rect.setAttribute("x", Number(rect.getAttribute("x")) - pos1);
+      rect.setAttribute("width", Number(rect.getAttribute("width")) + pos1);
+      label.setAttribute("x", Number(label.getAttribute("x")) - pos1 / 2);
+    }
   }
 
   let closeDragElement = () => {
