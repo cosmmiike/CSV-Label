@@ -1,6 +1,7 @@
 window.addEventListener("load", () => {
     let image = document.querySelector("#imrect");
     image.addEventListener("click", createBox);
+    document.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
 });
 
 
@@ -104,8 +105,8 @@ let dragBox = box => {
       pos3 = e.clientX;
       pos4 = e.clientY;
 
-      document.onmouseup = closeDragElement;
-      document.onmousemove = boxDrag;
+      document.onpointerup = closeDragElement;
+      document.onpointermove = boxDrag;
     }
   }
 
@@ -135,11 +136,11 @@ let dragBox = box => {
   }
 
   let closeDragElement = () => {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    document.onpointerup = null;
+    document.onpointermove = null;
   }
 
-  box.onmousedown = dragMouseDown;
+  box.onpointerdown = dragMouseDown;
 }
 
 
@@ -155,8 +156,8 @@ let dragNode = node => {
       pos3 = e.clientX;
       pos4 = e.clientY;
 
-      document.onmouseup = closeDragElement;
-      document.onmousemove = nodeDrag;
+      document.onpointerup = closeDragElement;
+      document.onpointermove = nodeDrag;
     }
   }
 
@@ -216,11 +217,11 @@ let dragNode = node => {
   }
 
   let closeDragElement = () => {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    document.onpointerup = null;
+    document.onpointermove = null;
   }
 
-  node.onmousedown = dragMouseDown;
+  node.onpointerdown = dragMouseDown;
 }
 
 
