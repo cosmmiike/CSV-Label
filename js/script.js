@@ -1,6 +1,7 @@
 window.addEventListener("load", () => {
     let image = document.querySelector("#imrect");
     image.addEventListener("click", createBox);
+    image.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
 });
 
 
