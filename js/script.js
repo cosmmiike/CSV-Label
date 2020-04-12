@@ -257,6 +257,7 @@ let dragNode = node => {
 }
 
 let showRemoveButton = box => {
+  box.parentNode.appendChild(box);
   circle = box.querySelector(".label_circle");
   close = box.querySelector(".label_close");
   text = box.querySelector(".label_text");
