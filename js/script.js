@@ -106,6 +106,8 @@ let dragBox = box => {
 
       document.onmouseup = closeDragElement;
       document.onmousemove = boxDrag;
+      document.ontouchend = closeDragElement;
+      document.ontouchmove = boxDrag;
     }
   }
 
@@ -137,9 +139,12 @@ let dragBox = box => {
   let closeDragElement = () => {
     document.onmouseup = null;
     document.onmousemove = null;
+    document.ontouchend = null;
+    document.ontouchmove = null;
   }
 
   box.onmousedown = dragMouseDown;
+  box.ontouchstart = dragMouseDown;
 }
 
 
@@ -157,6 +162,8 @@ let dragNode = node => {
 
       document.onmouseup = closeDragElement;
       document.onmousemove = nodeDrag;
+      document.dragMouseDown = closeDragElement;
+      document.ontouchmove = nodeDrag;
     }
   }
 
@@ -218,9 +225,12 @@ let dragNode = node => {
   let closeDragElement = () => {
     document.onmouseup = null;
     document.onmousemove = null;
+    document.ontouchend = null;
+    document.ontouchmove = null;
   }
 
   node.onmousedown = dragMouseDown;
+  node.ontouchstart = dragMouseDown;
 }
 
 
