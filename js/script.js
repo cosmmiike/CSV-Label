@@ -4,6 +4,24 @@ window.addEventListener("load", () => {
 });
 
 
+let collectionHas = (a, b) => {
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+
+let findParentBySelector = (elm, selector) => {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) {
+        cur = cur.parentNode;
+    }
+    return cur;
+}
+
+
 let labelClick = (e, elem) => {
   elem.textContent = Number(elem.textContent) + 1;
 }
@@ -89,6 +107,10 @@ let createBox = e => {
     image.appendChild(box);
 
     dragBox(box);
+    dragNode(lt);
+    dragNode(rt);
+    dragNode(lb);
+    dragNode(rb);
   }
 }
 
@@ -97,20 +119,21 @@ let dragBox = box => {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
   let dragMouseDown = e => {
-    e = e || window.event;
-    e.preventDefault();
+    if (e.target == box.querySelector(".rect")) {
+      e = e || window.event;
+      e.preventDefault();
 
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
 
-    document.onmouseup = closeDragElement;
-    document.onmousemove = boxDrag;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = boxDrag;
+    }
   }
 
   let boxDrag = e => {
     e = e || window.event;
     e.preventDefault();
-    e.stopPropagation();
 
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
@@ -139,4 +162,85 @@ let dragBox = box => {
   }
 
   box.onmousedown = dragMouseDown;
+}
+
+
+
+let dragNode = node => {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  let dragMouseDown = e => {
+    if (e.target == node) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      document.onmouseup = closeDragElement;
+      document.onmousemove = nodeDrag;
+    }
+  }
+
+  let nodeDrag = e => {
+    e = e || window.event;
+    e.preventDefault();
+
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    let box = findParentBySelector(node, ".box");
+    let rect = box.querySelector(".rect");
+    let lt = box.querySelector(".lt");
+    let rt = box.querySelector(".rt");
+    let lb = box.querySelector(".lb");
+    let rb = box.querySelector(".rb");
+    let label = box.querySelector(".num_label");
+
+    let nodeClass = node.getAttribute("class");
+    if (nodeClass == 'rb') {
+      rb.setAttribute("cx", rb.getAttribute("cx") - pos1);
+      rb.setAttribute("cy", rb.getAttribute("cy") - pos2);
+      rt.setAttribute("cx", rt.getAttribute("cx") - pos1);
+      lb.setAttribute("cy", lb.getAttribute("cy") - pos2);
+      rect.setAttribute("width", rect.getAttribute("width") - pos1);
+      rect.setAttribute("height", rect.getAttribute("height") - pos2);
+    } else if (nodeClass == 'rt') {
+      rt.setAttribute("cx", rt.getAttribute("cx") - pos1);
+      rt.setAttribute("cy", rt.getAttribute("cy") - pos2);
+      rb.setAttribute("cx", rb.getAttribute("cx") - pos1);
+      lt.setAttribute("cy", lt.getAttribute("cy") - pos2);
+      rect.setAttribute("y", rect.getAttribute("y") - pos2);
+      rect.setAttribute("width", rect.getAttribute("width") - pos1);
+      rect.setAttribute("height", lb.getAttribute("cy") - lt.getAttribute("cy"));
+    } else if (nodeClass == 'lb') {
+      lb.setAttribute("cx", lb.getAttribute("cx") - pos1);
+      lb.setAttribute("cy", lb.getAttribute("cy") - pos2);
+      lt.setAttribute("cx", lt.getAttribute("cx") - pos1);
+      rb.setAttribute("cy", rb.getAttribute("cy") - pos2);
+      rect.setAttribute("x", rect.getAttribute("x") - pos1);
+      rect.setAttribute("width", rt.getAttribute("cx") - lt.getAttribute("cx"));
+      rect.setAttribute("height", rect.getAttribute("height") - pos2);
+    } else if (nodeClass == 'lt') {
+      lt.setAttribute("cx", lt.getAttribute("cx") - pos1);
+      lt.setAttribute("cy", lt.getAttribute("cy") - pos2);
+      lb.setAttribute("cx", lb.getAttribute("cx") - pos1);
+      rt.setAttribute("cy", rt.getAttribute("cy") - pos2);
+      rect.setAttribute("x", rect.getAttribute("x") - pos1);
+      rect.setAttribute("y", rect.getAttribute("y") - pos2);
+      rect.setAttribute("width", rt.getAttribute("cx") - lt.getAttribute("cx"));
+      rect.setAttribute("height", lb.getAttribute("cy") - lt.getAttribute("cy"));
+    }
+    label.setAttribute("x", label.getAttribute("x") - pos1 / 2);
+    label.setAttribute("y", label.getAttribute("y") - pos2 / 2);
+  }
+
+  let closeDragElement = () => {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+
+  node.onmousedown = dragMouseDown;
 }
