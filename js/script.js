@@ -104,10 +104,8 @@ let dragBox = box => {
       pos3 = e.clientX;
       pos4 = e.clientY;
 
-      document.onmouseup = closeDragElement;
-      document.onmousemove = boxDrag;
-      document.ontouchend = closeDragElement;
-      document.ontouchmove = boxDrag;
+      document.onpointerup = closeDragElement;
+      document.onpointermove = boxDrag;
     }
   }
 
@@ -137,14 +135,11 @@ let dragBox = box => {
   }
 
   let closeDragElement = () => {
-    document.onmouseup = null;
-    document.onmousemove = null;
-    document.ontouchend = null;
-    document.ontouchmove = null;
+    document.onpointerup = null;
+    document.onpointermove = null;
   }
 
-  box.onmousedown = dragMouseDown;
-  box.ontouchstart = dragMouseDown;
+  box.onpointerdown = dragMouseDown;
 }
 
 
@@ -160,10 +155,8 @@ let dragNode = node => {
       pos3 = e.clientX;
       pos4 = e.clientY;
 
-      document.onmouseup = closeDragElement;
-      document.onmousemove = nodeDrag;
-      document.dragMouseDown = closeDragElement;
-      document.ontouchmove = nodeDrag;
+      document.onpointerup = closeDragElement;
+      document.onpointermove = nodeDrag;
     }
   }
 
@@ -223,14 +216,11 @@ let dragNode = node => {
   }
 
   let closeDragElement = () => {
-    document.onmouseup = null;
-    document.onmousemove = null;
-    document.ontouchend = null;
-    document.ontouchmove = null;
+    document.onpointerup = null;
+    document.onpointermove = null;
   }
 
-  node.onmousedown = dragMouseDown;
-  node.ontouchstart = dragMouseDown;
+  node.onpointerdown = dragMouseDown;
 }
 
 
