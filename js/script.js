@@ -61,7 +61,8 @@ let createBox = e => {
     label_circle.setAttribute("cx", "50%");
     label_circle.setAttribute("cy", "50%");
     label_circle.setAttribute("r", label_rad);
-    label_circle.setAttribute("fill", "red");
+    label_circle.setAttribute("fill", "blue");
+    label_circle.setAttribute("opacity", "0");
 
     let label_text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     label_text.setAttribute("class", "label_text");
@@ -71,6 +72,16 @@ let createBox = e => {
     label_text.setAttribute("text-anchor", "middle");
     label_text.setAttribute("style", "pointer-events: none;");
     label_text.textContent = "1";
+    label_text.style.fill = "00f";
+
+    let label_close = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    label_close.setAttribute("class", "label_close");
+    label_close.setAttribute("x", "0");
+    label_close.setAttribute("y", "0");
+    label_close.setAttribute("d", "M 5,5 L 15,15 M 15,5 L 5,15 Z");
+    label_close.setAttribute("stroke", "white");
+    label_close.setAttribute("stroke-width", "2");
+    label_close.setAttribute("opacity", "0");
 
     box.appendChild(rect);
     box.appendChild(lt);
@@ -80,10 +91,14 @@ let createBox = e => {
     box.appendChild(rb);
     num_label.appendChild(label_circle);
     num_label.appendChild(label_text);
+    num_label.appendChild(label_close);
     box.appendChild(num_label);
     image.appendChild(box);
 
-    label_circle.addEventListener("click", () => removeBox(label_text));
+    box.addEventListener("mouseover", () => showRemoveButton(box));
+    box.addEventListener("mouseout", () => hideRemoveButton(box));
+    label_circle.addEventListener("click", () => removeBox(box));
+    label_close.addEventListener("click", () => removeBox(box));
     dragBox(box);
     dragNode(lt);
     dragNode(rt);
@@ -241,8 +256,26 @@ let dragNode = node => {
   node.onpointerdown = dragMouseDown;
 }
 
+let showRemoveButton = box => {
+  circle = box.querySelector(".label_circle");
+  close = box.querySelector(".label_close");
+  text = box.querySelector(".label_text");
 
-let removeBox = label => {
-  let box = label.parentNode.parentNode;
+  circle.style.opacity = 1;
+  close.style.opacity = 1;
+  text.style.opacity = 0;
+}
+
+let hideRemoveButton = box => {
+  circle = box.querySelector(".label_circle");
+  close = box.querySelector(".label_close");
+  text = box.querySelector(".label_text");
+
+  circle.style.opacity = 0;
+  close.style.opacity = 0;
+  text.style.opacity = 1;
+}
+
+let removeBox = box => {
   box.parentNode.removeChild(box);
 }
