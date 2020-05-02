@@ -145,8 +145,8 @@ let dragBox = box => {
     let nodes = ["lt", "rt", "lb", "rb"];
 
 
-    if (Number(lt.getAttribute("cx")) - pos1 > 0 && pos1 > 0 ||
-        Number(lt.getAttribute("cx")) - pos1 < Number(image.getAttribute("width")) - Number(rect.getAttribute("width")) && pos1 < 0) {
+    if (Number(lt.getAttribute("cx")) - pos1 >= 0 && pos1 > 0 ||
+        Number(lt.getAttribute("cx")) - pos1 <= Number(image.getAttribute("width")) - Number(rect.getAttribute("width")) && pos1 < 0) {
       rect.setAttribute("x", Number(rect.getAttribute("x")) - pos1);
       label.setAttribute("x", Number(label.getAttribute("x")) - pos1);
       for (let node of nodes) {
@@ -155,8 +155,8 @@ let dragBox = box => {
       }
     }
 
-    if (Number(lt.getAttribute("cy")) - pos2 > 0 && pos2 > 0 ||
-        Number(lt.getAttribute("cy")) - pos2 < Number(image.getAttribute("height")) - Number(rect.getAttribute("height")) && pos2 < 0) {
+    if (Number(lt.getAttribute("cy")) - pos2 >= 0 && pos2 > 0 ||
+        Number(lt.getAttribute("cy")) - pos2 <= Number(image.getAttribute("height")) - Number(rect.getAttribute("height")) && pos2 < 0) {
         rect.setAttribute("y", Number(rect.getAttribute("y")) - pos2);
         label.setAttribute("y", Number(label.getAttribute("y")) - pos2);
         for (let node of nodes) {
@@ -212,9 +212,8 @@ let dragNode = node => {
     let nodeClass = node.getAttribute("class");
 
     if ((nodeClass == 'lt' || nodeClass == 'rt') &&
-        (Number(lt.getAttribute("cy")) - pos2 > 0 && pos2 > 0 ||
-         Number(rect.getAttribute("height")) + pos2 > 20 && pos2 < 0)) {
-      console.log(pos2, lt.getAttribute("cy"), Number(image.getAttribute("height")) - Number(rect.getAttribute("height")));
+        (Number(lt.getAttribute("cy")) - pos2 >= 0 && pos2 > 0 ||
+         Number(rect.getAttribute("height")) + pos2 >= 20 && pos2 < 0)) {
       lt.setAttribute("cy", Number(lt.getAttribute("cy")) - pos2);
       rt.setAttribute("cy", Number(rt.getAttribute("cy")) - pos2);
       rect.setAttribute("y", Number(rect.getAttribute("y")) - pos2);
@@ -223,8 +222,8 @@ let dragNode = node => {
     }
 
     if ((nodeClass == 'rt' || nodeClass == 'rb') &&
-        (Number(lt.getAttribute("cx")) - pos1 < Number(image.getAttribute("width")) - Number(rect.getAttribute("width")) && pos1 < 0 ||
-         Number(rect.getAttribute("width")) - pos1 > 20 && pos1 > 0 )) {
+        (Number(lt.getAttribute("cx")) - pos1 <= Number(image.getAttribute("width")) - Number(rect.getAttribute("width")) && pos1 < 0 ||
+         Number(rect.getAttribute("width")) - pos1 >= 20 && pos1 > 0 )) {
       rb.setAttribute("cx", Number(rb.getAttribute("cx")) - pos1);
       rt.setAttribute("cx", Number(rt.getAttribute("cx")) - pos1);
       rect.setAttribute("width", Number(rect.getAttribute("width")) - pos1);
@@ -232,8 +231,8 @@ let dragNode = node => {
     }
 
     if ((nodeClass == 'lb' || nodeClass == 'rb') &&
-        (Number(lt.getAttribute("cy")) - pos2 < Number(image.getAttribute("height")) - Number(rect.getAttribute("height")) && pos2 < 0 ||
-         Number(rect.getAttribute("height")) - pos2 > 20 && pos2 > 0 )) {
+        (Number(lt.getAttribute("cy")) - pos2 <= Number(image.getAttribute("height")) - Number(rect.getAttribute("height")) && pos2 < 0 ||
+         Number(rect.getAttribute("height")) - pos2 >= 20 && pos2 > 0 )) {
       lb.setAttribute("cy", Number(lb.getAttribute("cy")) - pos2);
       rb.setAttribute("cy", Number(rb.getAttribute("cy")) - pos2);
       rect.setAttribute("height", Number(rect.getAttribute("height")) - pos2);
@@ -241,14 +240,15 @@ let dragNode = node => {
     }
 
     if ((nodeClass == 'lt' || nodeClass == 'lb') &&
-        (Number(lt.getAttribute("cx")) - pos1 > 0 && pos1 > 0 ||
-         Number(rect.getAttribute("width")) + pos1 > 20 && pos1 < 0)) {
+        (Number(lt.getAttribute("cx")) - pos1 >= 0 && pos1 > 0 ||
+         Number(rect.getAttribute("width")) + pos1 >= 20 && pos1 < 0)) {
       lt.setAttribute("cx", Number(lt.getAttribute("cx")) - pos1);
       lb.setAttribute("cx", Number(lb.getAttribute("cx")) - pos1);
       rect.setAttribute("x", Number(rect.getAttribute("x")) - pos1);
       rect.setAttribute("width", Number(rect.getAttribute("width")) + pos1);
       label.setAttribute("x", Number(label.getAttribute("x")) - pos1 / 2);
     }
+    console.log(rect.getAttribute("x"), rect.getAttribute("y"))
   }
 
   let closeDragElement = () => {
