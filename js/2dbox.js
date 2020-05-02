@@ -1,6 +1,7 @@
 window.addEventListener("load", () => {
     let image = document.querySelector("#imrect");
     image.addEventListener("click", createBox);
+    image.ontouchmove = e => {e.preventDefault();}
 });
 
 
@@ -23,11 +24,11 @@ let createBox = e => {
     rect.setAttribute("y", y);
     rect.setAttribute("width", size);
     rect.setAttribute("height", size);
-    rect.setAttribute("style", "fill: blue; stroke: pink; stroke-width: 3; fill-opacity: 0.1; stroke-opacity: 0.9");
+    rect.setAttribute("style", "fill: blue; stroke: pink; stroke-width: 2; fill-opacity: 0.1; stroke-opacity: 0.9");
 
     let corner = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    corner.setAttribute("r", "4");
-    corner.setAttribute("style", "fill: white; stroke: pink; stroke-width: 3;");
+    corner.setAttribute("r", "3");
+    corner.setAttribute("style", "fill: white; stroke: pink; stroke-width: 2;");
 
     let lt = corner.cloneNode(true);
     lt.setAttribute("class", "lt");
@@ -143,18 +144,19 @@ let dragBox = box => {
     let label = box.querySelector(".num_label");
     let nodes = ["lt", "rt", "lb", "rb"];
 
-    if (Number(lt.getAttribute("cx")) > 0 && pos1 > 0 ||
-        Number(rt.getAttribute("cx")) < Number(image.getAttribute("width")) && pos1 < 0) {
-          rect.setAttribute("x", Number(rect.getAttribute("x")) - pos1);
-          label.setAttribute("x", Number(label.getAttribute("x")) - pos1);
-          for (let node of nodes) {
-            let elem = box.querySelector("." + node);
-            elem.setAttribute("cx", Number(elem.getAttribute("cx")) - pos1);
-          }
-        }
 
-    if (Number(lt.getAttribute("cy")) > pos2 && pos2 > 0 ||
-        Number(lb.getAttribute("cy")) + pos2 <= Number(image.getAttribute("height")) && pos2 < 0) {
+    if (Number(lt.getAttribute("cx")) - pos1 >=0 && pos1 > 0 ||
+        Number(lt.getAttribute("cx")) - pos1 <= Number(image.getAttribute("width")) - Number(rect.getAttribute("width")) && pos1 < 0) {
+      rect.setAttribute("x", Number(rect.getAttribute("x")) - pos1);
+      label.setAttribute("x", Number(label.getAttribute("x")) - pos1);
+      for (let node of nodes) {
+        let elem = box.querySelector("." + node);
+        elem.setAttribute("cx", Number(elem.getAttribute("cx")) - pos1);
+      }
+    }
+
+    if (Number(lt.getAttribute("cy")) - pos2 >=0 && pos2 > 0 ||
+        Number(lt.getAttribute("cy")) - pos2 <= Number(image.getAttribute("height")) - Number(rect.getAttribute("height")) && pos2 < 0) {
         rect.setAttribute("y", Number(rect.getAttribute("y")) - pos2);
         label.setAttribute("y", Number(label.getAttribute("y")) - pos2);
         for (let node of nodes) {
