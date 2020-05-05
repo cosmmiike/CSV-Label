@@ -1,7 +1,7 @@
 window.addEventListener("load", () => {
-    let image = document.querySelector("#imrect");
-    image.addEventListener("click", createBox);
-    image.ontouchmove = e => {e.preventDefault();}
+    let imrect = document.querySelector("#imrect");
+    imrect.addEventListener("click", createBox);
+    imrect.ontouchmove = e => {e.preventDefault();}
 });
 
 
@@ -248,7 +248,6 @@ let dragNode = node => {
       rect.setAttribute("width", Number(rect.getAttribute("width")) + pos1);
       label.setAttribute("x", Number(label.getAttribute("x")) - pos1 / 2);
     }
-    console.log(rect.getAttribute("x"), rect.getAttribute("y"))
   }
 
   let closeDragElement = () => {
